@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حملة المحبة لقرية الحمامة</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- جسيمات الخلفية -->
+    <div id="particles-js"></div>
+    
+    <!-- الشبكة الرئيسية -->
+    <div class="main-grid">
+        
+        <!-- الزاوية اليمنى - قائمة التبرعات الحديثة -->
+        <div class="panel right-panel">
+            <div class="panel-header">
+                <h2>آخر التبرعات</h2>
+                <div class="live-badge">🟢 مباشر</div>
+            </div>
+            <div class="donations-list" id="donationsList">
+                <!-- التبرعات تظهر هنا -->
+            </div>
+        </div>
+
+        <!-- المنتصف - الإجمالي والعنوان -->
+        <div class="panel center-panel">
+            <div class="total-section">
+                <div class="total-display">
+                    <div class="total-item">
+                        <div class="total-amount" id="totalUSD">0</div>
+                        <div class="total-currency">دولار أمريكي (USD)</div>
+                    </div>
+                    <div class="total-item">
+                        <div class="total-amount" id="totalTRY">0</div>
+                        <div class="total-currency">ليرة تركية (TRY)</div>
+                    </div>
+                    <div class="total-item">
+                        <div class="total-amount" id="totalSYP">0</div>
+                        <div class="total-currency">ليرة سورية (SYP)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="campaign-title">
+                <div class="title-icon">❤️</div>
+                <h1>حملة المحبة</h1>
+                <h2>لقرية الحمامة</h2>
+                <div class="title-sub">يداً بيد.. نصنع الأمل</div>
+            </div>
+        </div>
+
+        <!-- الزاوية اليسرى - أعلى التبرعات -->
+        <div class="panel left-panel">
+            <div class="top-donations-section">
+                <!-- أعلى التبرعات بالدولار -->
+                <div class="top-currency-section">
+                    <h3>🏆 أعلى التبرعات - USD</h3>
+                    <div class="top-list" id="topUSDList">
+                        <!-- أعلى تبرعات USD -->
+                    </div>
+                </div>
+
+                <!-- أعلى التبرعات بالليرة التركية -->
+                <div class="top-currency-section">
+                    <h3>🏆 أعلى التبرعات - TRY</h3>
+                    <div class="top-list" id="topTRYList">
+                        <!-- أعلى تبرعات TRY -->
+                    </div>
+                </div>
+
+                <!-- أعلى التبرعات بالليرة السورية -->
+                <div class="top-currency-section">
+                    <h3>🏆 أعلى التبرعات - SYP</h3>
+                    <div class="top-list" id="topSYPList">
+                        <!-- أعلى تبرعات SYP -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="last-update">
+                <div class="update-text" id="lastUpdate">جاري التحديث...</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- مكتبة الجسيمات -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

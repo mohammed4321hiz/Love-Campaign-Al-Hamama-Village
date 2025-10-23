@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التحكم - حملة المحبة</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="admin-body">
+    <div id="particles-js"></div>
+    
+    <div class="admin-container">
+        <!-- الهيدر -->
+        <header class="admin-header">
+            <div class="admin-title">
+                <span class="icon">⚙️</span>
+                <div>
+                    <h1>نظام التحكم الشامل</h1>
+                    <p>حملة المحبة لقرية الحمامة</p>
+                </div>
+            </div>
+            <div class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </header>
+
+        <!-- القائمة الجانبية لللاب توب -->
+        <aside class="admin-sidebar">
+            <!-- الإحصائيات السريعة -->
+            <div class="sidebar-stats">
+                <div class="sidebar-stat">
+                    <span class="stat-label">الإجمالي USD</span>
+                    <span class="stat-value usd" id="sidebarUSD">0$</span>
+                </div>
+                <div class="sidebar-stat">
+                    <span class="stat-label">الإجمالي TRY</span>
+                    <span class="stat-value try" id="sidebarTRY">0₺</span>
+                </div>
+                <div class="sidebar-stat">
+                    <span class="stat-label">الإجمالي SYP</span>
+                    <span class="stat-value syp" id="sidebarSYP">0ل.س</span>
+                </div>
+            </div>
+
+            <!-- التنقل الرئيسي -->
+            <div class="sidebar-section">
+                <h3>القائمة الرئيسية</h3>
+                <div class="sidebar-nav">
+                    <button class="sidebar-item active" onclick="showSection('add')">
+                        <span class="icon">➕</span>
+                        <span>إضافة تبرع</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showSection('manage')">
+                        <span class="icon">📊</span>
+                        <span>إدارة التبرعات</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showSection('exchange')">
+                        <span class="icon">💱</span>
+                        <span>أسعار الصرف</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showSection('export')">
+                        <span class="icon">📤</span>
+                        <span>تصدير بيانات</span>
+                    </button>
+                    <button class="sidebar-item" onclick="showSection('stats')">
+                        <span class="icon">📈</span>
+                        <span>الإحصائيات</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- الإجراءات السريعة -->
+            <div class="sidebar-section">
+                <h3>إجراءات سريعة</h3>
+                <div class="sidebar-nav">
+                    <button class="sidebar-item" onclick="exportToExcel()">
+                        <span class="icon">📥</span>
+                        <span>تحميل Excel</span>
+                    </button>
+                    <button class="sidebar-item" onclick="backupData()">
+                        <span class="icon">💾</span>
+                        <span>نسخ احتياطي</span>
+                    </button>
+                    <button class="sidebar-item" onclick="addSampleData()">
+                        <span class="icon">🔄</span>
+                        <span>بيانات تجريبية</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- آخر التبرعات -->
+            <div class="sidebar-section">
+                <h3>آخر التبرعات</h3>
+                <div class="recent-list" id="sidebarRecentList">
+                    <!-- آخر التبرعات تظهر هنا -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- القائمة الجانبية للجوال -->
+        <nav class="mobile-nav" id="mobileNav">
+            <div class="nav-items">
+                <button class="nav-item active" onclick="showSection('add')">➕ إضافة تبرع</button>
+                <button class="nav-item" onclick="showSection('manage')">📊 إدارة التبرعات</button>
+                <button class="nav-item" onclick="showSection('exchange')">💱 أسعار الصرف</button>
+                <button class="nav-item" onclick="showSection('export')">📤 تصدير بيانات</button>
+                <button class="nav-item" onclick="showSection('stats')">📈 إحصائيات</button>
+            </div>
+        </nav>
+
+        <!-- المحتوى الرئيسي -->
+        <main class="admin-main">
+            
+            <!-- قسم إضافة التبرع -->
+            <section id="addSection" class="content-section active">
+                <div class="section-card">
+                    <h2>إضافة تبرع جديد</h2>
+                    
+                    <div class="form-group">
+                        <label for="donorName">اسم المتبرع</label>
+                        <input type="text" id="donorName" placeholder="أدخل اسم المتبرع" autofocus>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="donationAmount">المبلغ</label>
+                            <input type="number" id="donationAmount" step="0.01" placeholder="0.00" min="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="donationCurrency">العملة</label>
+                            <select id="donationCurrency" class="currency-select">
+                                <option value="USD">$ دولار أمريكي (USD)</option>
+                                <option value="TRY">₺ ليرة تركية (TRY)</option>
+                                <option value="SYP">ل.س ليرة سورية (SYP)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- أزرار المبالغ السريعة -->
+                    <div class="quick-amounts">
+                        <h3>مبالغ سريعة:</h3>
+                        <div class="amount-buttons">
+                            <!-- دولار -->
+                            <button class="amount-btn usd" onclick="setAmount(5, 'USD')">5$</button>
+                            <button class="amount-btn usd" onclick="setAmount(10, 'USD')">10$</button>
+                            <button class="amount-btn usd" onclick="setAmount(25, 'USD')">25$</button>
+                            <button class="amount-btn usd" onclick="setAmount(50, 'USD')">50$</button>
+                            <button class="amount-btn usd" onclick="setAmount(100, 'USD')">100$</button>
+                            
+                            <!-- ليرة تركية -->
+                            <button class="amount-btn try" onclick="setAmount(100, 'TRY')">100₺</button>
+                            <button class="amount-btn try" onclick="setAmount(250, 'TRY')">250₺</button>
+                            <button class="amount-btn try" onclick="setAmount(500, 'TRY')">500₺</button>
+                            <button class="amount-btn try" onclick="setAmount(1000, 'TRY')">1000₺</button>
+                            
+                            <!-- ليرة سورية -->
+                            <button class="amount-btn syp" onclick="setAmount(5000, 'SYP')">5000ل.س</button>
+                            <button class="amount-btn syp" onclick="setAmount(10000, 'SYP')">10000ل.س</button>
+                            <button class="amount-btn syp" onclick="setAmount(25000, 'SYP')">25000ل.س</button>
+                            <button class="amount-btn syp" onclick="setAmount(50000, 'SYP')">50000ل.س</button>
+                        </div>
+                    </div>
+
+                    <button class="primary-btn large-btn" onclick="addDonation()">
+                        <span class="btn-icon">➕</span>
+                        إضافة التبرع
+                    </button>
+                </div>
+
+                <!-- التبرعات الحديثة -->
+                <div class="section-card">
+                    <h3>آخر 5 تبرعات</h3>
+                    <div class="recent-list" id="recentList">
+                        <!-- التبرعات الحديثة -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم إدارة التبرعات -->
+            <section id="manageSection" class="content-section">
+                <div class="section-card">
+                    <h2>إدارة التبرعات</h2>
+                    
+                    <div class="management-tools">
+                        <div class="search-box">
+                            <input type="text" id="searchDonations" placeholder="ابحث في التبرعات...">
+                        </div>
+                        
+                        <div class="filter-currency">
+                            <select id="currencyFilter" onchange="filterByCurrency()">
+                                <option value="all">جميع العملات</option>
+                                <option value="USD">دولار أمريكي</option>
+                                <option value="TRY">ليرة تركية</option>
+                                <option value="SYP">ليرة سورية</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="management-actions">
+                        <button class="action-btn" onclick="selectAllDonations()">✅ تحديد الكل</button>
+                        <button class="action-btn danger" onclick="deleteSelectedDonations()">🗑️ حذف المحدد</button>
+                        <button class="action-btn" onclick="exportToExcel()">📥 تصدير Excel</button>
+                    </div>
+
+                    <div class="donations-management" id="donationsManagement">
+                        <!-- قائمة التبرعات للإدارة -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم أسعار الصرف -->
+            <section id="exchangeSection" class="content-section">
+                <div class="section-card">
+                    <h2>💱 أسعار الصرف</h2>
+                    
+                    <div class="exchange-rates">
+                        <div class="exchange-card">
+                            <h3>أسعار الصرف الحالية</h3>
+                            <div class="rate-item">
+                                <label>1 USD = </label>
+                                <input type="number" id="usdToTry" step="0.01" min="0">
+                                <span>TRY</span>
+                            </div>
+                            <div class="rate-item">
+                                <label>1 USD = </label>
+                                <input type="number" id="usdToSyp" step="1" min="0">
+                                <span>SYP</span>
+                            </div>
+                            <button class="primary-btn" onclick="saveExchangeRates()">💾 حفظ الأسعار</button>
+                        </div>
+
+                        <div class="exchange-card">
+                            <h3>إجمالي التبرعات بجميع العملات</h3>
+                            <div class="total-breakdown">
+                                <div class="total-item">
+                                    <span class="currency">USD</span>
+                                    <span class="amount" id="breakdownUSD">0$</span>
+                                </div>
+                                <div class="total-item">
+                                    <span class="currency">TRY</span>
+                                    <span class="amount" id="breakdownTRY">0₺</span>
+                                </div>
+                                <div class="total-item">
+                                    <span class="currency">SYP</span>
+                                    <span class="amount" id="breakdownSYP">0ل.س</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم تصدير البيانات -->
+            <section id="exportSection" class="content-section">
+                <div class="section-card">
+                    <h2>📤 تصدير البيانات</h2>
+                    
+                    <div class="export-options">
+                        <div class="export-card">
+                            <h3>📊 تصدير إلى Excel</h3>
+                            <p>حفظ جميع التبرعات في ملف Excel</p>
+                            <button class="primary-btn" onclick="exportToExcel()">
+                                <span class="btn-icon">📥</span>
+                                تحميل ملف Excel
+                            </button>
+                        </div>
+
+                        <div class="export-card">
+                            <h3>🔄 استيراد بيانات</h3>
+                            <p>استيراد تبرعات من ملف Excel</p>
+                            <input type="file" id="excelFile" accept=".xlsx, .xls" style="display: none;">
+                            <button class="secondary-btn" onclick="document.getElementById('excelFile').click()">
+                                <span class="btn-icon">📤</span>
+                                اختيار ملف Excel
+                            </button>
+                        </div>
+
+                        <div class="export-card">
+                            <h3>💾 نسخ احتياطي</h3>
+                            <p>حفظ بيانات النظام بالكامل</p>
+                            <button class="secondary-btn" onclick="backupData()">
+                                <span class="btn-icon">💾</span>
+                                إنشاء نسخة احتياطية
+                            </button>
+                            <button class="secondary-btn" onclick="restoreData()">
+                                <span class="btn-icon">🔄</span>
+                                استعادة نسخة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- قسم الإحصائيات -->
+            <section id="statsSection" class="content-section">
+                <div class="section-card">
+                    <h2>📈 الإحصائيات الشاملة</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box large">
+                            <div class="stat-value" id="totalDonations">0</div>
+                            <div class="stat-label">إجمالي عدد التبرعات</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-value" id="totalDonors">0</div>
+                            <div class="stat-label">عدد المتبرعين</div>
+                        </div>
+                        
+                        <div class="stat-box">
+                            <div class="stat-value" id="todayDonations">0</div>
+                            <div class="stat-label">تبرعات اليوم</div>
+                        </div>
+                    </div>
+
+                    <div class="currency-stats">
+                        <h3>إحصائيات حسب العملة</h3>
+                        <div class="currency-stats-grid">
+                            <div class="currency-stat usd">
+                                <h4>💰 دولار أمريكي (USD)</h4>
+                                <div class="stat">الإجمالي: <span id="statsUSD">0$</span></div>
+                                <div class="stat">عدد التبرعات: <span id="countUSD">0</span></div>
+                                <div class="stat">أعلى تبرع: <span id="maxUSD">0$</span></div>
+                            </div>
+                            
+                            <div class="currency-stat try">
+                                <h4>💷 ليرة تركية (TRY)</h4>
+                                <div class="stat">الإجمالي: <span id="statsTRY">0₺</span></div>
+                                <div class="stat">عدد التبرعات: <span id="countTRY">0</span></div>
+                                <div class="stat">أعلى تبرع: <span id="maxTRY">0₺</span></div>
+                            </div>
+                            
+                            <div class="currency-stat syp">
+                                <h4>💶 ليرة سورية (SYP)</h4>
+                                <div class="stat">الإجمالي: <span id="statsSYP">0ل.س</span></div>
+                                <div class="stat">عدد التبرعات: <span id="countSYP">0</span></div>
+                                <div class="stat">أعلى تبرع: <span id="maxSYP">0ل.س</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- رسائل التنبيه -->
+        <div class="alert-message" id="alertMessage"></div>
+
+        <!-- نافذة التعديل -->
+        <div class="modal-overlay" id="editModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>✏️ تعديل التبرع</h3>
+                    <button class="close-btn" onclick="closeEditModal()">✕</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editDonorName">اسم المتبرع</label>
+                        <input type="text" id="editDonorName">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editDonationAmount">المبلغ</label>
+                            <input type="number" id="editDonationAmount" step="0.01" min="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="editDonationCurrency">العملة</label>
+                            <select id="editDonationCurrency" class="currency-select">
+                                <option value="USD">$ دولار أمريكي</option>
+                                <option value="TRY">₺ ليرة تركية</option>
+                                <option value="SYP">ل.س ليرة سورية</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="secondary-btn" onclick="closeEditModal()">إلغاء</button>
+                    <button class="primary-btn" onclick="saveEdit()">💾 حفظ التعديلات</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- مكتبة الجسيمات -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
